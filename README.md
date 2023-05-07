@@ -8,7 +8,7 @@ I wanted to familiarize myself with the C programming language and this seemed l
 
 ## Dependencies
 
-- SDL2 (I should make this work with submodules or something)
+- SDL2
 
 ## Compatibility
 
