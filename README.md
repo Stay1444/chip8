@@ -1,6 +1,6 @@
 # Chip 8 Emulator WIP
 
-This is my entrypoint to emulators and C. 
+I wanted to familiarize myself with the C programming language and this seemed like a great and fun project :)
 
 ![IBM Test Rom](img/ibm.png)
 
@@ -10,4 +10,4 @@ This is my entrypoint to emulators and C.
 
 ## Compatibility
 
-This should work on Linux, needs testing.
+Should work on Linux, needs testing.
