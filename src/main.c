@@ -12,7 +12,7 @@
 #include "Rendering/DisplayRenderer.c"
 
 #define TARGET_FPS 60
-#define TARGET_IPS 500
+#define TARGET_IPS 800
 
 void update_keyboard(SDL_Event *event, Keyboard *keyboard);
 
