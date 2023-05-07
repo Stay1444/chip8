@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "Display.c"
 #include "Stack.c"
+#include "Keyboard.h"
 
 #define CHIP8_SHIFT_LEGACY_BEHAVIOR 0
 #define CHIP48_BEHAVIOR 1
@@ -103,7 +104,7 @@ INST vm_fetch(VM *vm)
     return instruction;
 }
 
-VMError vm_execute(VM *vm)
+VMError vm_execute(VM *vm, Keyboard *keyboard)
 {
     INST instruction = vm_fetch(vm);
 
@@ -115,7 +116,7 @@ VMError vm_execute(VM *vm)
     uint8_t NN = (uint8_t)(instruction & 0x00FF);
     uint16_t NNN = (instruction & 0x0FFF);
 
-    int pcIncrement = 2;
+    size_t pcIncrement = 2;
     switch (opcode)
     {
     case INST_CLEAR_SCREEN:
@@ -180,7 +181,7 @@ VMError vm_execute(VM *vm)
     }
     case INST_SCALL:
     {
-        stack_push(&vm->stack, vm->program_counter + pcIncrement);
+        stack_push(&vm->stack, (uint16_t)(vm->program_counter + pcIncrement));
         pcIncrement = 0;
         vm->program_counter = NNN;
         break;
@@ -310,14 +311,118 @@ VMError vm_execute(VM *vm)
         // Jump to address NNN + value in register V0
         vm->program_counter = vm->variable_registers[0] + (opcode & 0x0FFF);
 #endif
-
+        pcIncrement = 0;
         break;
     }
     case INST_RANDOM:
     {
-        vm->variable_registers[X] = (rand() % 256) & NN;
+        vm->variable_registers[X] = (uint8_t)((rand() % 256) & NN);
         break;
     }
+    case INST_SKIP_IF_KEY:
+    {
+        switch (NN)
+        {
+        case 0x9E:
+        {
+            if (keyboard->keys[vm->variable_registers[X]])
+            {
+                pcIncrement += 2;
+            }
+            break;
+        }
+        case 0xA1:
+        {
+            if (!keyboard->keys[vm->variable_registers[X]])
+            {
+                pcIncrement += 2;
+            }
+            break;
+        }
+
+        default:
+            printf("UNIMPLEMENTED INST_SKIP_KEY %i\n", NN);
+            break;
+        }
+        break;
+    }
+    case INST_TIMER:
+    {
+        switch (NN)
+        {
+        case 0x7:
+            vm->variable_registers[X] = vm->delay_timer;
+            break;
+        case 0x15:
+            vm->delay_timer = vm->variable_registers[X];
+            break;
+        case 0x18:
+            vm->sound_timer = vm->variable_registers[X];
+            break;
+        case 0x1E:
+        {
+            vm->index_register += vm->variable_registers[X];
+            if (vm->index_register > 0xFFF)
+            {
+                vm->variable_registers[0xF] = 1;
+            }
+            else
+            {
+                vm->variable_registers[0XF] = 0;
+            }
+            break;
+        }
+        case 0x0A:
+        {
+            printf("TODO: GET KEY\n");
+            return VMERROR_UNSUPPORTED_OPCODE;
+        }
+        case 0x29:
+        {
+
+            uint8_t character = vm->variable_registers[X] & 0x0F;
+            uint16_t address = character * 5;
+            vm->index_register = address;
+            break;
+        }
+        case 0x33:
+        {
+            uint8_t v = vm->variable_registers[X];
+
+            uint8_t ones = v % 10;
+            v /= 10;
+            uint8_t tens = v % 10;
+            v /= 10;
+            uint8_t hundreds = v % 10;
+
+            vm->memory[vm->index_register] = hundreds;
+            vm->memory[vm->index_register + 1] = tens;
+            vm->memory[vm->index_register + 2] = ones;
+            break;
+        }
+        case 0x55:
+        {
+            for (int i = 0; i <= X; i++)
+            {
+                vm->memory[vm->index_register + i] = vm->variable_registers[i];
+            }
+            break;
+        }
+        case 0x65:
+        {
+            for (int i = 0; i <= X; i++)
+            {
+                vm->variable_registers[i] = vm->memory[vm->index_register + i];
+            }
+            break;
+        }
+        default:
+            printf("Unknown timer %i\n", NN);
+            return VMERROR_UNSUPPORTED_OPCODE;
+        }
+        break;
+    }
+
     default:
         return VMERROR_UNSUPPORTED_OPCODE;
     }

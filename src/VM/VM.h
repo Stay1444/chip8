@@ -5,7 +5,7 @@
 #include <string.h>
 #include "Display.h"
 #include "Stack.h"
-
+#include "Keyboard.h"
 #define VM_MEMORY_SIZE 4096
 #define VM_VARIABLE_REGISTER_COUNT 16
 
@@ -39,4 +39,4 @@ void vm_free(VM *vm);
 void vm_memcpy(VM *vm, size_t start, void *source, size_t length);
 int vm_load_program(VM *vm, const char *filename);
 INST vm_fetch(VM *vm);
-VMError vm_execute(VM *vm);
+VMError vm_execute(VM *vm, Keyboard *keyboard);

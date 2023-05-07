@@ -19,4 +19,6 @@
 #define INST_JUMP_OFFSET 0xB000
 #define INST_RANDOM 0xC000
 
+#define INST_SKIP_IF_KEY 0xE000
+#define INST_TIMER 0xF000
 const char *opcode_to_cstr(uint16_t opcode);

@@ -11,7 +11,9 @@
 #include "Rendering/DisplayRenderer.c"
 
 #define TARGET_FPS 60
-#define TARGET_IPS 25
+#define TARGET_IPS 500
+
+void update_keyboard(SDL_Event *event, Keyboard *keyboard);
 
 int main(int argc, char *argv[])
 {
@@ -26,7 +28,7 @@ int main(int argc, char *argv[])
 
     VM *vm = vm_new();
 
-    vm_memcpy(vm, 0x50, (void *)FONT_DATA, FONT_DATA_SIZE);
+    vm_memcpy(vm, 0x0, (void *)FONT_DATA, FONT_DATA_SIZE);
 
     printf("Loading program %s\n", file_path);
 
@@ -63,6 +65,8 @@ int main(int argc, char *argv[])
     int instructionTimes = 0;
     char *title = malloc(32 * sizeof(char));
 
+    Keyboard keyboard = {0};
+
     while (running)
     {
         while (SDL_PollEvent(&event))
@@ -70,6 +74,11 @@ int main(int argc, char *argv[])
             if (event.type == SDL_QUIT)
             {
                 running = 0;
+            }
+
+            if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
+            {
+                update_keyboard(&event, &keyboard);
             }
         }
 
@@ -103,7 +112,7 @@ int main(int argc, char *argv[])
         if (instructionTimer > 1000.0 / TARGET_IPS)
         {
             instructionTimer = 0;
-            VMError error = vm_execute(vm);
+            VMError error = vm_execute(vm, &keyboard);
             if (error != VMERROR_OK)
             {
                 fprintf(stderr, "ERROR: %s\n", vmerror_to_cstr(error));
@@ -130,4 +139,62 @@ int main(int argc, char *argv[])
     dispose_render_context(&render_context);
 
     return 0;
+}
+
+void update_keyboard(SDL_Event *event, Keyboard *keyboard)
+{
+    bool keydown = event->type == SDL_KEYDOWN;
+    switch (event->key.keysym.sym)
+    {
+    case SDLK_1:
+        keyboard->keys[0x0] = keydown;
+        break;
+    case SDLK_2:
+        keyboard->keys[0x1] = keydown;
+        break;
+    case SDLK_3:
+        keyboard->keys[0x2] = keydown;
+        break;
+    case SDLK_4:
+        keyboard->keys[0x3] = keydown;
+        break;
+    case SDLK_q:
+        keyboard->keys[0x4] = keydown;
+        break;
+    case SDLK_w:
+        keyboard->keys[0x5] = keydown;
+        break;
+    case SDLK_e:
+        keyboard->keys[0x6] = keydown;
+        break;
+    case SDLK_r:
+        keyboard->keys[0x7] = keydown;
+        break;
+    case SDLK_a:
+        keyboard->keys[0x8] = keydown;
+        break;
+    case SDLK_s:
+        keyboard->keys[0x9] = keydown;
+        break;
+    case SDLK_d:
+        keyboard->keys[0xA] = keydown;
+        break;
+    case SDLK_f:
+        keyboard->keys[0xB] = keydown;
+        break;
+    case SDLK_z:
+        keyboard->keys[0xC] = keydown;
+        break;
+    case SDLK_x:
+        keyboard->keys[0xD] = keydown;
+        break;
+    case SDLK_c:
+        keyboard->keys[0xE] = keydown;
+        break;
+    case SDLK_v:
+        keyboard->keys[0xF] = keydown;
+        break;
+    default:
+        break;
+    }
 }
