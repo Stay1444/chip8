@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 #include "SDL2/SDL.h"
 
@@ -17,7 +18,7 @@ void update_keyboard(SDL_Event *event, Keyboard *keyboard);
 
 int main(int argc, char *argv[])
 {
-
+    srand((unsigned int)time(NULL));
     if (argc < 2)
     {
         printf("Usage: chip8 <path-to-rom>\n");
@@ -143,56 +144,56 @@ int main(int argc, char *argv[])
 
 void update_keyboard(SDL_Event *event, Keyboard *keyboard)
 {
-    bool keydown = event->type == SDL_KEYDOWN;
+    int keydown = event->type == SDL_KEYDOWN;
     switch (event->key.keysym.sym)
     {
     case SDLK_1:
-        keyboard->keys[0x0] = keydown;
+        keyboard->keys[0x1] = keydown > 0;
         break;
     case SDLK_2:
-        keyboard->keys[0x1] = keydown;
+        keyboard->keys[0x2] = keydown > 0;
         break;
     case SDLK_3:
-        keyboard->keys[0x2] = keydown;
+        keyboard->keys[0x3] = keydown > 0;
         break;
     case SDLK_4:
-        keyboard->keys[0x3] = keydown;
+        keyboard->keys[0xc] = keydown > 0;
         break;
     case SDLK_q:
-        keyboard->keys[0x4] = keydown;
+        keyboard->keys[0x4] = keydown > 0;
         break;
     case SDLK_w:
-        keyboard->keys[0x5] = keydown;
+        keyboard->keys[0x5] = keydown > 0;
         break;
     case SDLK_e:
-        keyboard->keys[0x6] = keydown;
+        keyboard->keys[0x6] = keydown > 0;
         break;
     case SDLK_r:
-        keyboard->keys[0x7] = keydown;
+        keyboard->keys[0xD] = keydown > 0;
         break;
     case SDLK_a:
-        keyboard->keys[0x8] = keydown;
+        keyboard->keys[0x7] = keydown > 0;
         break;
     case SDLK_s:
-        keyboard->keys[0x9] = keydown;
+        keyboard->keys[0x8] = keydown > 0;
         break;
     case SDLK_d:
-        keyboard->keys[0xA] = keydown;
+        keyboard->keys[0x9] = keydown > 0;
         break;
     case SDLK_f:
-        keyboard->keys[0xB] = keydown;
+        keyboard->keys[0xE] = keydown > 0;
         break;
     case SDLK_z:
-        keyboard->keys[0xC] = keydown;
+        keyboard->keys[0xA] = keydown > 0;
         break;
     case SDLK_x:
-        keyboard->keys[0xD] = keydown;
+        keyboard->keys[0x0] = keydown > 0;
         break;
     case SDLK_c:
-        keyboard->keys[0xE] = keydown;
+        keyboard->keys[0xB] = keydown > 0;
         break;
     case SDLK_v:
-        keyboard->keys[0xF] = keydown;
+        keyboard->keys[0xF] = keydown > 0;
         break;
     default:
         break;

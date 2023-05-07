@@ -374,8 +374,12 @@ VMError vm_execute(VM *vm, Keyboard *keyboard)
         }
         case 0x0A:
         {
-            printf("TODO: GET KEY\n");
-            return VMERROR_UNSUPPORTED_OPCODE;
+            if (!keyboard->keys[vm->variable_registers[X]])
+            {
+                pcIncrement -= 2;
+            }
+            // printf("%i | %i\n", vm->variable_registers[X], keyboard->keys[vm->variable_registers[X]]);
+            break;
         }
         case 0x29:
         {
