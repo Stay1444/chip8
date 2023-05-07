@@ -1,4 +1,4 @@
-# Chip 8 Emulator WIP
+# Chip 8 Emulator
 
 I wanted to familiarize myself with the C programming language and this seemed like a great and fun project :)
 
